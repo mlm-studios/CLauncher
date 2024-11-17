@@ -56,8 +56,12 @@ class AppDrawerAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         try {
-            if (appFilteredList.size == 0 || position == RecyclerView.NO_POSITION) return
+            if (appFilteredList.isEmpty() || position == RecyclerView.NO_POSITION) return
             val appModel = appFilteredList[holder.bindingAdapterPosition]
+
+            // Check for duplicate app names
+            val hasDuplicate = appFilteredList.count { it.appLabel == appModel.appLabel } > 1
+
             holder.bind(
                 flag,
                 appLabelGravity,
@@ -157,8 +161,14 @@ class AppDrawerAdapter(
             with(binding) {
                 appHideLayout.visibility = View.GONE
                 renameLayout.visibility = View.GONE
-                appTitle.visibility = View.VISIBLE
-                appTitle.text = appModel.appLabel + if (appModel.isNew == true) " ✦" else ""
+
+                // Determine if app name should be visible
+
+                appTitle.visibility = View.GONE // if (showAppName) View.VISIBLE else
+                appTitle.text = buildString {
+                    append(appModel.appLabel)
+                    append(if (appModel.isNew == true) " (New)" else "")
+                }
                 appTitle.gravity = appLabelGravity
                 otherProfileIndicator.isVisible = appModel.user != myUserHandle
 
