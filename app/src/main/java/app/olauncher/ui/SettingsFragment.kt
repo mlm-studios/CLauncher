@@ -96,7 +96,7 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         when (view.id) {
             R.id.olauncherHiddenApps -> showHiddenApps()
             //R.id.olauncherPro -> requireContext().openUrl(Constants.URL_OLAUNCHER_PRO)
-            R.id.digitalWellbeing -> viewModel.showDialog.postValue(Constants.Dialog.DIGITAL_WELLBEING)
+            //R.id.digitalWellbeing -> viewModel.showDialog.postValue(Constants.Dialog.DIGITAL_WELLBEING)
             R.id.appInfo -> openAppInfo(requireContext(), Process.myUserHandle(), BuildConfig.APPLICATION_ID)
             R.id.setLauncher -> viewModel.resetLauncherLiveData.call()
             R.id.toggleLock -> toggleLockMode()
