@@ -44,7 +44,7 @@ jobs:
           IFS='.' read -ra VERSION_PARTS <<< "$OLD_VERSION_NAME"
 
           # Increment the minor version number
-          if [ ${#VERSION_PARTS[@]} -ge 3 ]; then
+          if [ ${#VERSION_PARTS[@]} -ge 2 ]; then
             MINOR=$((VERSION_PARTS[2] + 1))
             VERSION_PARTS[2]=$MINOR
           else
@@ -53,7 +53,7 @@ jobs:
           fi
 
           # Construct new version name
-          NEW_VERSION_NAME=$(IFS=.; echo "${VERSION_PARTS[*]}")
+          NEW_VERSION_NAME="${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.${VERSION_PARTS[2]}"
 
           # Update build.gradle
           sed -i "s/versionCode $OLD_VERSION_CODE/versionCode $NEW_VERSION_CODE/" $BUILD_GRADLE_PATH
@@ -113,8 +113,8 @@ jobs:
             artifacts/armeabi-v7a/clauncher-${{ env.VERSION_NAME }}-armeabi-v7a.apk
             artifacts/x86/clauncher-${{ env.VERSION_NAME }}-x86.apk
             artifacts/x86_64/clauncher-${{ env.VERSION_NAME }}-x86_64.apk
-          name: "CLauncher v${{ env.VERSION_NAME }}"
-          tag_name: "v${{ env.VERSION_NAME }}"
+          name: "CLauncher ${{ env.VERSION_NAME }}"
+          tag_name: "${{ env.VERSION_NAME }}"
           prerelease: false
           body: |
             ## 📱 CLauncher Release v${{ env.VERSION_NAME }}
