@@ -37,20 +37,19 @@ jobs:
           OLD_VERSION_CODE=$(grep "versionCode" $BUILD_GRADLE_PATH | head -1 | grep -oE '[0-9]+')
           OLD_VERSION_NAME=$(grep "versionName" $BUILD_GRADLE_PATH | head -1 | grep -oE '"([^"]+)"' | tr -d '"')
 
-          # Increment version code and build number
+          # Increment version code
           NEW_VERSION_CODE=$((OLD_VERSION_CODE + 10))
 
           # Split version name into parts
           IFS='.' read -ra VERSION_PARTS <<< "$OLD_VERSION_NAME"
-          VERSION_PART_COUNT=${#VERSION_PARTS[@]}
 
-          # Extract build number if present
-          if [[ ${VERSION_PARTS[-1]} =~ ^b[0-9]+$ ]]; then
-            BUILD_NUMBER=${VERSION_PARTS[-1]:1}
-            NEW_BUILD_NUMBER=$((BUILD_NUMBER + 1))
-            VERSION_PARTS[${#VERSION_PARTS[@]}-1]="b$NEW_BUILD_NUMBER"
+          # Increment the minor version number
+          if [ ${#VERSION_PARTS[@]} -ge 3 ]; then
+            MINOR=$((VERSION_PARTS[2] + 1))
+            VERSION_PARTS[2]=$MINOR
           else
-            VERSION_PARTS+=("b1")
+            echo "Version name does not have enough parts to increment minor version."
+            exit 1
           fi
 
           # Construct new version name
@@ -99,7 +98,7 @@ jobs:
           mkdir -p artifacts/armeabi-v7a
           mkdir -p artifacts/x86
           mkdir -p artifacts/x86_64
-          
+
           # Copy APKs to respective directories
           find app/build/outputs/apk/debug/ -name "*arm64-v8a-debug.apk" -exec cp {} artifacts/arm64-v8a/clauncher-${{ env.VERSION_NAME }}-arm64-v8a.apk \;
           find app/build/outputs/apk/debug/ -name "*armeabi-v7a-debug.apk" -exec cp {} artifacts/armeabi-v7a/clauncher-${{ env.VERSION_NAME }}-armeabi-v7a.apk \;
