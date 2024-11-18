@@ -117,7 +117,7 @@ jobs:
           tag_name: "${{ env.VERSION_NAME }}"
           prerelease: false
           body: |
-            ## 📱 CLauncher Release v${{ env.VERSION_NAME }}
+            ## 📱 CLauncher Release ${{ env.VERSION_NAME }}
             
             **Build Date**: ${{ env.BUILD_DATE }}
             **Version Code**: ${{ env.VERSION_CODE }}
