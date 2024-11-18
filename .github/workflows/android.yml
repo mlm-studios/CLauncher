@@ -49,7 +49,7 @@ jobs:
       - name: Prepare APK for Release
         run: |
           ls
-          cp composeApp/build/outputs/apk/foss/debug/*.apk \
+          cp app/build/outputs/apk/foss/debug/*.apk \
           artifacts/clauncher-${{ env.BUILD_DATE }}.apk
 
       - name: Create Release
