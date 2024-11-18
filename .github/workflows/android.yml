@@ -12,7 +12,7 @@ concurrency:
 env:
   JAVA_VERSION: '21'
   JAVA_DISTRIBUTION: 'corretto'
-  VERSION_PROPS_FILE: 'version.properties'
+  BUILD_GRADLE_PATH: 'app/build.gradle'  # Adjust path if necessary
 
 jobs:
   build-and-release:
@@ -29,48 +29,45 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1 
+          fetch-depth: 1
 
-      - name: Update Version
+      - name: Update Version in build.gradle
         run: |
-          if [ -f $VERSION_PROPS_FILE ]; then
-            # Read current version
-            version=$(grep "version_name" $VERSION_PROPS_FILE | cut -d'=' -f2)
-            code=$(grep "version_code" $VERSION_PROPS_FILE | cut -d'=' -f2)
-            
-            # Split version into parts
-            IFS='.' read -ra ADDR <<< "$version"
-            major="${ADDR[0]}"
-            minor="${ADDR[1]}"
-            patch="${ADDR[2]}"
-            build="${ADDR[3]}"
-            
-            # Increment build number
-            new_build=$((build + 1))
-            new_code=$((code + 10))
-            
-            # Create new version string
-            new_version="$major.$minor.$patch.$new_build"
-            
-            # Update version.properties
-            echo "version_name=$new_version" > $VERSION_PROPS_FILE
-            echo "version_code=$new_code" >> $VERSION_PROPS_FILE
+          # Extract current version code and name
+          OLD_VERSION_CODE=$(grep "versionCode" $BUILD_GRADLE_PATH | head -1 | grep -oE '[0-9]+')
+          OLD_VERSION_NAME=$(grep "versionName" $BUILD_GRADLE_PATH | head -1 | grep -oE '"([^"]+)"' | tr -d '"')
+
+          # Increment version code and build number
+          NEW_VERSION_CODE=$((OLD_VERSION_CODE + 10))
+
+          # Split version name into parts
+          IFS='.' read -ra VERSION_PARTS <<< "$OLD_VERSION_NAME"
+          VERSION_PART_COUNT=${#VERSION_PARTS[@]}
+
+          # Extract build number if present
+          if [[ ${VERSION_PARTS[-1]} =~ ^b[0-9]+$ ]]; then
+            BUILD_NUMBER=${VERSION_PARTS[-1]:1}
+            NEW_BUILD_NUMBER=$((BUILD_NUMBER + 1))
+            VERSION_PARTS[${#VERSION_PARTS[@]}-1]="b$NEW_BUILD_NUMBER"
           else
-            # Create initial version file
-            echo "version_name=0.0.0.1" > $VERSION_PROPS_FILE
-            echo "version_code=100" >> $VERSION_PROPS_FILE
-            new_version="0.0.0.1"
-            new_code="100"
+            VERSION_PARTS+=("b1")
           fi
-          
-          echo "VERSION_NAME=$new_version" >> $GITHUB_ENV
-          echo "VERSION_CODE=$new_code" >> $GITHUB_ENV
-          
+
+          # Construct new version name
+          NEW_VERSION_NAME=$(IFS=.; echo "${VERSION_PARTS[*]}")
+
+          # Update build.gradle
+          sed -i "s/versionCode $OLD_VERSION_CODE/versionCode $NEW_VERSION_CODE/" $BUILD_GRADLE_PATH
+          sed -i "s/versionName \"$OLD_VERSION_NAME\"/versionName \"$NEW_VERSION_NAME\"/" $BUILD_GRADLE_PATH
+
+          echo "VERSION_NAME=$NEW_VERSION_NAME" >> $GITHUB_ENV
+          echo "VERSION_CODE=$NEW_VERSION_CODE" >> $GITHUB_ENV
+
           # Commit and push version update
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-          git add $VERSION_PROPS_FILE
-          git commit -m "Bump version to $new_version (code: $new_code) [skip ci]" || echo "No changes to commit"
+          git add $BUILD_GRADLE_PATH
+          git commit -m "Bump version to $NEW_VERSION_NAME (code: $NEW_VERSION_CODE) [skip ci]" || echo "No changes to commit"
           git push
 
       - name: Set up Java
@@ -85,32 +82,10 @@ jobs:
         with:
           gradle-home-cache-cleanup: true
 
-      # - name: Decode Keystore
-      #   run: |
-      #     echo "${{ secrets.KEYSTORE }}" > release.keystore.asc
-      #     gpg -d --passphrase "${{ secrets.KEYSTORE_PASSPHRASE }}" --batch release.keystore.asc > release.keystore
-
       - name: Run Tests
         id: tests
         continue-on-error: true
         run: ./gradlew test
-
-      # - name: Build Signed APK
-      #   id: build
-      #   continue-on-error: true
-      #   run: |
-      #     ./gradlew assembleRelease \
-      #       -Pandroid.injected.signing.store.file=$PWD/release.keystore \
-      #       -Pandroid.injected.signing.store.password=${{ secrets.STORE_PASSWORD }} \
-      #       -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
-      #       -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
-      #     mkdir -p artifacts
-
-      - name: Check Build Status
-        if: steps.build.outcome == 'failure' || steps.tests.outcome == 'failure'
-        run: |
-          echo "Build or tests failed!"
-          exit 1
 
       - name: Build APK
         run: |
@@ -158,20 +133,3 @@ jobs:
             - x86_64 (64-bit): clauncher-${{ env.VERSION_NAME }}-x86_64.apk
             
           generate_release_notes: true
-
-      - name: Notify on Failure
-        if: failure()
-        uses: actions/github-script@v6
-        with:
-          script: |
-            github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: 'Build Failed for v${{ env.VERSION_NAME }}',
-              body: 'Bi-monthly build failed on ${{ env.BUILD_DATE }}'
-            })
-
-      - name: Cleanup Artifacts
-        if: always()
-        run: rm -rf artifacts/.injected.signing.store.file=$PWD/release.keystore \
-            -
