@@ -1,8 +1,8 @@
-name: Weekly Android App Deploy
+name: bi-monthly Android App Deploy
 
 on:
   schedule:
-    - cron: '0 0 * * 2'  # Every Tuesday at 00:00 UTC
+    - cron: '0 0 1 */2 *'
   workflow_dispatch:  # Manual trigger
 
 concurrency:
@@ -27,7 +27,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch all history for proper versioning
+          fetch-depth: 1 
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -48,33 +48,25 @@ jobs:
 
       - name: Prepare APK for Release
         run: |
-          cp composeApp/build/outputs/apk/foss/debug/app-foss-debug.apk \
+          ls
+          cp composeApp/build/outputs/apk/foss/debug/*.apk \
           artifacts/clauncher-${{ env.BUILD_DATE }}.apk
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           files: artifacts/clauncher-${{ env.BUILD_DATE }}.apk
-          name: "CLauncher Weekly Build | ${{ env.BUILD_DATE }}"
-          tag_name: "weekly-${{ env.BUILD_DATE }}"
+          name: "CLauncher bi-monthly Build | ${{ env.BUILD_DATE }}"
+          tag_name: "bimonthly-${{ env.BUILD_DATE }}"
           prerelease: true
           body: |
-            ## 📱 CLauncher Weekly Build
+            ## 📱 CLauncher bi-monthly Build
             
             **Build Date**: ${{ env.BUILD_DATE }}
             
             ### 📝 Notes
-            - This is an automated weekly build
-            - For testing purposes only
-            - Please report any issues on the GitHub repository
+            - This is an automated bi-monthly build
             
-            ### 📲 Installation
-            - Download the APK from the assets below
-            - Enable "Install from unknown sources" in your Android settings
-            - Install the downloaded APK
-            
-            ### ⚠️ Disclaimer
-            This is a development build and may contain bugs. Use at your own risk.
           generate_release_notes: true
 
       - name: Cleanup Artifacts
