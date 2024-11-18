@@ -117,16 +117,28 @@ jobs:
           ./gradlew assembleDebug --no-daemon
           mkdir -p artifacts
 
-      - name: Prepare APK for Release
+      - name: Prepare APKs for Release
         run: |
-          ls app/build/outputs/apk/*/*
-          cp app/build/outputs/apk/debug/*.apk \
-          artifacts/clauncher-${{ env.VERSION_NAME }}.apk
+          # Create directory for each architecture
+          mkdir -p artifacts/arm64-v8a
+          mkdir -p artifacts/armeabi-v7a
+          mkdir -p artifacts/x86
+          mkdir -p artifacts/x86_64
+          
+          # Copy APKs to respective directories
+          find app/build/outputs/apk/debug/ -name "*arm64-v8a-debug.apk" -exec cp {} artifacts/arm64-v8a/clauncher-${{ env.VERSION_NAME }}-arm64-v8a.apk \;
+          find app/build/outputs/apk/debug/ -name "*armeabi-v7a-debug.apk" -exec cp {} artifacts/armeabi-v7a/clauncher-${{ env.VERSION_NAME }}-armeabi-v7a.apk \;
+          find app/build/outputs/apk/debug/ -name "*x86-debug.apk" -exec cp {} artifacts/x86/clauncher-${{ env.VERSION_NAME }}-x86.apk \;
+          find app/build/outputs/apk/debug/ -name "*x86_64-debug.apk" -exec cp {} artifacts/x86_64/clauncher-${{ env.VERSION_NAME }}-x86_64.apk \;
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          files: artifacts/clauncher-${{ env.VERSION_NAME }}.apk
+          files: |
+            artifacts/arm64-v8a/clauncher-${{ env.VERSION_NAME }}-arm64-v8a.apk
+            artifacts/armeabi-v7a/clauncher-${{ env.VERSION_NAME }}-armeabi-v7a.apk
+            artifacts/x86/clauncher-${{ env.VERSION_NAME }}-x86.apk
+            artifacts/x86_64/clauncher-${{ env.VERSION_NAME }}-x86_64.apk
           name: "CLauncher v${{ env.VERSION_NAME }}"
           tag_name: "v${{ env.VERSION_NAME }}"
           prerelease: false
@@ -138,6 +150,12 @@ jobs:
             
             ### 📝 Notes
             - This is an automated bi-monthly build
+            
+            ### 📦 Available APKs
+            - ARM64 (64-bit): clauncher-${{ env.VERSION_NAME }}-arm64-v8a.apk
+            - ARM (32-bit): clauncher-${{ env.VERSION_NAME }}-armeabi-v7a.apk
+            - x86 (32-bit): clauncher-${{ env.VERSION_NAME }}-x86.apk
+            - x86_64 (64-bit): clauncher-${{ env.VERSION_NAME }}-x86_64.apk
             
           generate_release_notes: true
 
