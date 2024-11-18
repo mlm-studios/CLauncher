@@ -19,7 +19,6 @@ import app.clauncher.data.Constants
 import app.clauncher.data.Prefs
 import app.clauncher.databinding.ActivityMainBinding
 import app.clauncher.helper.isDarkThemeOn
-import app.clauncher.helper.isDefaultLauncher
 import app.clauncher.helper.isEinkDisplay
 import app.clauncher.helper.isTablet
 import app.clauncher.helper.resetLauncherViaFakeActivity
@@ -110,7 +109,7 @@ class MainActivity : AppCompatActivity() {
             openLauncherChooser(it)
         }
         viewModel.resetLauncherLiveData.observe(this) {
-            if (isDefaultLauncher() || Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
                 resetLauncherViaFakeActivity()
             else
                 showLauncherSelector(Constants.REQUEST_CODE_LAUNCHER_SELECTOR)

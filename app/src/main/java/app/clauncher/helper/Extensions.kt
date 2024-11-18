@@ -18,7 +18,6 @@ import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.RequiresApi
-import app.clauncher.BuildConfig
 import app.clauncher.R
 import app.clauncher.data.Constants
 
@@ -70,8 +69,8 @@ fun Context.resetDefaultLauncher() {
 }
 
 fun Context.isDefaultLauncher(): Boolean {
-    val launcherPackageName = getDefaultLauncherPackage(this)
-    return BuildConfig.APPLICATION_ID == launcherPackageName
+   val launcherPackageName = getDefaultLauncherPackage(this)
+    return applicationContext.packageName == launcherPackageName
 }
 
 fun Context.resetLauncherViaFakeActivity() {

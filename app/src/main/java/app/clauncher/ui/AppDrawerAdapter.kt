@@ -60,8 +60,6 @@ class AppDrawerAdapter(
             if (appFilteredList.isEmpty() || position == RecyclerView.NO_POSITION) return
             val appModel = appFilteredList[holder.bindingAdapterPosition]
 
-            // Check for duplicate app names
-            val hasDuplicate = appFilteredList.count { it.appLabel == appModel.appLabel } > 1
 
             holder.bind(
                 flag,
@@ -203,7 +201,7 @@ class AppDrawerAdapter(
                             etAppRename.imeOptions = EditorInfo.IME_ACTION_DONE;
                         }
                     }
-                    etAppRename.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+                    etAppRename.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
                         if (hasFocus)
                             appTitle.visibility = View.INVISIBLE
                         else
@@ -238,7 +236,6 @@ class AppDrawerAdapter(
                                 appRenameListener(appModel, renameLabel)
                                 renameLayout.visibility = View.GONE
                             }
-                            true
                         }
                         false
                     }

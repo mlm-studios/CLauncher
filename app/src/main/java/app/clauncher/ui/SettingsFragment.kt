@@ -20,7 +20,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import app.clauncher.BuildConfig
 import app.clauncher.MainViewModel
 import app.clauncher.R
 import app.clauncher.data.Constants
@@ -98,7 +97,7 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
             R.id.clauncherHiddenApps -> showHiddenApps()
             //R.id.clauncherPro -> requireContext().openUrl(Constants.URL_CLAUNCHER_PRO)
             //R.id.digitalWellbeing -> viewModel.showDialog.postValue(Constants.Dialog.DIGITAL_WELLBEING)
-            R.id.appInfo -> openAppInfo(requireContext(), Process.myUserHandle(), BuildConfig.APPLICATION_ID)
+            R.id.appInfo -> openAppInfo(requireContext(), Process.myUserHandle(), requireContext().packageName)
             R.id.setLauncher -> viewModel.resetLauncherLiveData.call()
             R.id.toggleLock -> toggleLockMode()
             R.id.showApps -> toggleAppVisibility()

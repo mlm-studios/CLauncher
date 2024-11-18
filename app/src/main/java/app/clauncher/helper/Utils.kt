@@ -35,7 +35,6 @@ import android.widget.Toast
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatDelegate
-import app.clauncher.BuildConfig
 import app.clauncher.R
 import app.clauncher.data.AppModel
 import app.clauncher.data.Constants
@@ -94,7 +93,7 @@ suspend fun getAppsList(
                     )
 
                     // if the current app is not OLauncher
-                    if (app.applicationInfo.packageName != BuildConfig.APPLICATION_ID) {
+                    if (!app.applicationInfo.packageName.equals(context.getPackageName())) {
                         // is this a hidden app?
                         if (hiddenApps.contains(app.applicationInfo.packageName + "|" + profile.toString())) {
                             if (includeHiddenApps) {
@@ -150,7 +149,7 @@ fun getUserHandleFromString(context: Context, userHandleString: String): UserHan
 
 fun isClauncherDefault(context: Context): Boolean {
     val launcherPackageName = getDefaultLauncherPackage(context)
-    return BuildConfig.APPLICATION_ID == launcherPackageName
+    return context.packageName == launcherPackageName
 }
 
 fun getDefaultLauncherPackage(context: Context): String {
