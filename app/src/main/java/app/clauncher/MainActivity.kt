@@ -1,4 +1,4 @@
-package app.olauncher
+package app.clauncher
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -15,17 +15,16 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import app.olauncher.data.Constants
-import app.olauncher.data.Prefs
-import app.olauncher.databinding.ActivityMainBinding
-import app.olauncher.helper.isDarkThemeOn
-import app.olauncher.helper.isDefaultLauncher
-import app.olauncher.helper.isEinkDisplay
-import app.olauncher.helper.isOlauncherDefault
-import app.olauncher.helper.isTablet
-import app.olauncher.helper.resetLauncherViaFakeActivity
-import app.olauncher.helper.setPlainWallpaper
-import app.olauncher.helper.showLauncherSelector
+import app.clauncher.data.Constants
+import app.clauncher.data.Prefs
+import app.clauncher.databinding.ActivityMainBinding
+import app.clauncher.helper.isDarkThemeOn
+import app.clauncher.helper.isDefaultLauncher
+import app.clauncher.helper.isEinkDisplay
+import app.clauncher.helper.isTablet
+import app.clauncher.helper.resetLauncherViaFakeActivity
+import app.clauncher.helper.setPlainWallpaper
+import app.clauncher.helper.showLauncherSelector
 
 class MainActivity : AppCompatActivity() {
 
@@ -122,7 +121,7 @@ class MainActivity : AppCompatActivity() {
 //        viewModel.showDialog.observe(this) {
 //            when (it) {
 //                Constants.Dialog.ABOUT -> {
-//                    showMessageDialog(getString(R.string.app_name), getString(R.string.welcome_to_olauncher_settings), getString(R.string.okay)) {
+//                    showMessageDialog(getString(R.string.app_name), getString(R.string.welcome_to_clauncher_settings), getString(R.string.okay)) {
 //                        //binding.messageLayout.visibility = View.GONE
 //                    }
 //                }
@@ -198,21 +197,21 @@ class MainActivity : AppCompatActivity() {
 //            Constants.UserState.REVIEW -> {
 //                if (prefs.rateClicked)
 //                    prefs.userState = Constants.UserState.SHARE
-//                else if (isOlauncherDefault(this))
+//                else if (isClauncherDefault(this))
 //                    viewModel.showDialog.postValue(Constants.Dialog.REVIEW)
 //            }
 //
 //            Constants.UserState.RATE -> {
 //                if (prefs.rateClicked)
 //                    prefs.userState = Constants.UserState.SHARE
-//                else if (isOlauncherDefault(this)
+//                else if (isClauncherDefault(this)
 //                    && prefs.firstOpenTime.hasBeenDays(3)
 //                    && Calendar.getInstance().get(Calendar.HOUR_OF_DAY) >= 15
 //                ) viewModel.showDialog.postValue(Constants.Dialog.RATE)
 //            }
 //
 //            Constants.UserState.SHARE -> {
-//                if (isOlauncherDefault(this) && prefs.firstOpenTime.hasBeenDays(14)
+//                if (isClauncherDefault(this) && prefs.firstOpenTime.hasBeenDays(14)
 //                    && prefs.shareShownTime.hasBeenDays(45)
 //                    && Calendar.getInstance().get(Calendar.HOUR_OF_DAY) >= 15
 //                ) viewModel.showDialog.postValue(Constants.Dialog.SHARE)

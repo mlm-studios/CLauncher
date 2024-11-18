@@ -1,4 +1,4 @@
-package app.olauncher.helper
+package app.clauncher.helper
 
 import android.annotation.SuppressLint
 import android.app.SearchManager
@@ -35,11 +35,11 @@ import android.widget.Toast
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatDelegate
-import app.olauncher.BuildConfig
-import app.olauncher.R
-import app.olauncher.data.AppModel
-import app.olauncher.data.Constants
-import app.olauncher.data.Prefs
+import app.clauncher.BuildConfig
+import app.clauncher.R
+import app.clauncher.data.AppModel
+import app.clauncher.data.Constants
+import app.clauncher.data.Prefs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -148,7 +148,7 @@ fun getUserHandleFromString(context: Context, userHandleString: String): UserHan
     return android.os.Process.myUserHandle()
 }
 
-fun isOlauncherDefault(context: Context): Boolean {
+fun isClauncherDefault(context: Context): Boolean {
     val launcherPackageName = getDefaultLauncherPackage(context)
     return BuildConfig.APPLICATION_ID == launcherPackageName
 }
@@ -480,7 +480,7 @@ fun View.animateAlpha(alpha: Float = 1.0f) {
 
 fun Context.shareApp() {
     val message = getString(R.string.are_you_using_your_phone_or_is_your_phone_using_you) +
-            "\n" + Constants.URL_OLAUNCHER_PLAY_STORE
+            "\n" + Constants.URL_CLAUNCHER_PLAY_STORE
     val sendIntent: Intent = Intent().apply {
         action = Intent.ACTION_SEND
         putExtra(Intent.EXTRA_TEXT, message)
@@ -494,7 +494,7 @@ fun Context.shareApp() {
 fun Context.rateApp() {
     val intent = Intent(
         Intent.ACTION_VIEW,
-        Uri.parse(Constants.URL_OLAUNCHER_PLAY_STORE)
+        Uri.parse(Constants.URL_CLAUNCHER_PLAY_STORE)
     )
     var flags = Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_MULTIPLE_TASK
     flags = flags or Intent.FLAG_ACTIVITY_NEW_DOCUMENT

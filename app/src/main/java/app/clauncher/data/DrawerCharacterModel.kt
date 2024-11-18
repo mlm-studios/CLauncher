@@ -1,4 +1,4 @@
-package app.olauncher.data
+package app.clauncher.data
 
 data class DrawerCharacterModel(
     val character: String = "",

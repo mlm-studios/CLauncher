@@ -1,8 +1,7 @@
-package app.olauncher.ui
+package app.clauncher.ui
 
 import android.app.admin.DevicePolicyManager
 import android.content.Context
-import android.content.Intent
 import android.content.res.Configuration
 import android.os.BatteryManager
 import android.os.Build
@@ -20,30 +19,29 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import app.olauncher.MainViewModel
-import app.olauncher.R
-import app.olauncher.data.AppModel
-import app.olauncher.data.Constants
-import app.olauncher.data.Prefs
-import app.olauncher.databinding.FragmentHomeBinding
-import app.olauncher.helper.appUsagePermissionGranted
-import app.olauncher.helper.dpToPx
-import app.olauncher.helper.expandNotificationDrawer
-import app.olauncher.helper.getChangedAppTheme
-import app.olauncher.helper.getUserHandleFromString
-import app.olauncher.helper.isPackageInstalled
-import app.olauncher.helper.openAlarmApp
-import app.olauncher.helper.openCalendar
-import app.olauncher.helper.openCameraApp
-import app.olauncher.helper.openDialerApp
-import app.olauncher.helper.openSearch
-import app.olauncher.helper.setPlainWallpaperByTheme
-import app.olauncher.helper.showToast
-import app.olauncher.listener.OnSwipeTouchListener
-import app.olauncher.listener.ViewSwipeTouchListener
+import app.clauncher.MainViewModel
+import app.clauncher.R
+import app.clauncher.data.AppModel
+import app.clauncher.data.Constants
+import app.clauncher.data.Prefs
+import app.clauncher.databinding.FragmentHomeBinding
+import app.clauncher.helper.appUsagePermissionGranted
+import app.clauncher.helper.dpToPx
+import app.clauncher.helper.expandNotificationDrawer
+import app.clauncher.helper.getChangedAppTheme
+import app.clauncher.helper.getUserHandleFromString
+import app.clauncher.helper.isPackageInstalled
+import app.clauncher.helper.openAlarmApp
+import app.clauncher.helper.openCalendar
+import app.clauncher.helper.openCameraApp
+import app.clauncher.helper.openDialerApp
+import app.clauncher.helper.openSearch
+import app.clauncher.helper.setPlainWallpaperByTheme
+import app.clauncher.helper.showToast
+import app.clauncher.listener.OnSwipeTouchListener
+import app.clauncher.listener.ViewSwipeTouchListener
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -80,7 +78,7 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
     override fun onResume() {
         super.onResume()
         populateHomeScreen(false)
-        viewModel.isOlauncherDefault()
+        //viewModel.isClauncherDefault()
         if (prefs.showStatusBar) showStatusBar()
         else hideStatusBar()
     }
@@ -91,7 +89,7 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
             R.id.clock -> openClockApp()
             R.id.date -> openCalendarApp()
             R.id.setDefaultLauncher -> viewModel.resetLauncherLiveData.call()
-            R.id.tvScreenTime -> openScreenTimeDigitalWellbeing()
+            //R.id.tvScreenTime -> openScreenTimeDigitalWellbeing()
 
             else -> {
                 try { // Launch app
@@ -164,19 +162,19 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         viewModel.refreshHome.observe(viewLifecycleOwner) {
             populateHomeScreen(it)
         }
-        viewModel.isOlauncherDefault.observe(viewLifecycleOwner, Observer {
-            if (it != true) {
-                if (prefs.dailyWallpaper) {
-                    prefs.dailyWallpaper = false
-                    viewModel.cancelWallpaperWorker()
-                }
-                prefs.homeBottomAlignment = false
-                setHomeAlignment()
-            }
-            if (binding.firstRunTips.visibility == View.VISIBLE) return@Observer
-            if (it) binding.setDefaultLauncher.visibility = View.GONE
-            else binding.setDefaultLauncher.visibility = View.VISIBLE
-        })
+//        viewModel.isClauncherDefault.observe(viewLifecycleOwner, Observer {
+//            if (it != true) {
+//                if (prefs.dailyWallpaper) {
+//                    prefs.dailyWallpaper = false
+//                    viewModel.cancelWallpaperWorker()
+//                }
+//                prefs.homeBottomAlignment = false
+//                setHomeAlignment()
+//            }
+//            if (binding.firstRunTips.visibility == View.VISIBLE) return@Observer
+//            if (it) binding.setDefaultLauncher.visibility = View.GONE
+//            else binding.setDefaultLauncher.visibility = View.VISIBLE
+//        })
         viewModel.homeAppAlignment.observe(viewLifecycleOwner) {
             setHomeAlignment(it)
         }
@@ -478,28 +476,28 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         }
         requireActivity().recreate()
     }
-
-    private fun openScreenTimeDigitalWellbeing() {
-        val intent = Intent()
-        try {
-            intent.setClassName(
-                Constants.DIGITAL_WELLBEING_PACKAGE_NAME,
-                Constants.DIGITAL_WELLBEING_ACTIVITY
-            )
-            startActivity(intent)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            try {
-                intent.setClassName(
-                    Constants.DIGITAL_WELLBEING_SAMSUNG_PACKAGE_NAME,
-                    Constants.DIGITAL_WELLBEING_SAMSUNG_ACTIVITY
-                )
-                startActivity(intent)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
+//
+//    private fun openScreenTimeDigitalWellbeing() {
+//        val intent = Intent()
+//        try {
+//            intent.setClassName(
+//                Constants.DIGITAL_WELLBEING_PACKAGE_NAME,
+//                Constants.DIGITAL_WELLBEING_ACTIVITY
+//            )
+//            startActivity(intent)
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//            try {
+//                intent.setClassName(
+//                    Constants.DIGITAL_WELLBEING_SAMSUNG_PACKAGE_NAME,
+//                    Constants.DIGITAL_WELLBEING_SAMSUNG_ACTIVITY
+//                )
+//                startActivity(intent)
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//            }
+//        }
+//    }
 
     private fun showLongPressToast() = requireContext().showToast(getString(R.string.long_press_to_select_app))
 

@@ -1,4 +1,4 @@
-package app.olauncher.helper
+package app.clauncher.helper
 
 import android.app.Activity
 import android.app.AppOpsManager
@@ -18,9 +18,9 @@ import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.RequiresApi
-import app.olauncher.BuildConfig
-import app.olauncher.R
-import app.olauncher.data.Constants
+import app.clauncher.BuildConfig
+import app.clauncher.R
+import app.clauncher.data.Constants
 
 fun View.hideKeyboard() {
     this.clearFocus()

@@ -1,4 +1,4 @@
-package app.olauncher
+package app.clauncher
 
 import android.app.Application
 import android.app.Service.USAGE_STATS_SERVICE
@@ -7,7 +7,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.pm.LauncherApps
 import android.os.UserHandle
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -17,16 +16,15 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import app.olauncher.data.AppModel
-import app.olauncher.data.Constants
-import app.olauncher.data.Constants.ONE_DAY_IN_MILLIS
-import app.olauncher.data.Prefs
-import app.olauncher.helper.SingleLiveEvent
-import app.olauncher.helper.WallpaperWorker
-import app.olauncher.helper.formattedTimeSpent
-import app.olauncher.helper.getAppsList
-import app.olauncher.helper.isOlauncherDefault
-import app.olauncher.helper.showToast
+import app.clauncher.data.AppModel
+import app.clauncher.data.Constants
+import app.clauncher.data.Constants.ONE_DAY_IN_MILLIS
+import app.clauncher.data.Prefs
+import app.clauncher.helper.SingleLiveEvent
+import app.clauncher.helper.WallpaperWorker
+import app.clauncher.helper.formattedTimeSpent
+import app.clauncher.helper.getAppsList
+import app.clauncher.helper.showToast
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
@@ -42,7 +40,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val updateSwipeApps = MutableLiveData<Any>()
     val appList = MutableLiveData<List<AppModel>?>()
     val hiddenApps = MutableLiveData<List<AppModel>?>()
-    val isOlauncherDefault = MutableLiveData<Boolean>()
+    val isCLauncherDefault = MutableLiveData<Boolean>()
     val launcherResetFailed = MutableLiveData<Boolean>()
     val homeAppAlignment = MutableLiveData<Int>()
     val screenTimeValue = MutableLiveData<String>()
@@ -167,7 +165,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         toggleDateTime.postValue(Unit)
     }
 
-    private fun updateSwipeApps() {
+    fun updateSwipeApps() {
         updateSwipeApps.postValue(Unit)
     }
 
@@ -215,9 +213,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun isOlauncherDefault() {
-        isOlauncherDefault.value = isOlauncherDefault(appContext)
-    }
+//    fun isCLauncherDefault() {
+//        isCLauncherDefault.value = isCLauncherDefault(appContext)
+//    }
 
 //    fun resetDefaultLauncherApp(context: Context) {
 //        resetDefaultLauncher(context)

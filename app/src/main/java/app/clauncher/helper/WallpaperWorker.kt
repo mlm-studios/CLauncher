@@ -1,11 +1,11 @@
-package app.olauncher.helper
+package app.clauncher.helper
 
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import app.olauncher.data.Constants
-import app.olauncher.data.Prefs
+import app.clauncher.data.Constants
+import app.clauncher.data.Prefs
 import kotlinx.coroutines.coroutineScope
 
 class WallpaperWorker(appContext: Context, workerParams: WorkerParameters) : CoroutineWorker(appContext, workerParams) {
@@ -14,7 +14,7 @@ class WallpaperWorker(appContext: Context, workerParams: WorkerParameters) : Cor
 
     override suspend fun doWork(): Result = coroutineScope {
         val success =
-            if (isOlauncherDefault(applicationContext).not())
+            if (isClauncherDefault(applicationContext).not())
                 true
             else if (prefs.dailyWallpaper) {
                 val wallType = checkWallpaperType()

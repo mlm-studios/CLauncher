@@ -1,4 +1,4 @@
-package app.olauncher.data
+package app.clauncher.data
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -6,7 +6,7 @@ import android.view.Gravity
 import androidx.appcompat.app.AppCompatDelegate
 
 class Prefs(context: Context) {
-    private val PREFS_FILENAME = "app.olauncher"
+    private val PREFS_FILENAME = "app.clauncher"
 
     private val FIRST_OPEN = "FIRST_OPEN"
     private val FIRST_OPEN_TIME = "FIRST_OPEN_TIME"
@@ -15,6 +15,7 @@ class Prefs(context: Context) {
     private val USER_STATE = "USER_STATE"
     private val LOCK_MODE = "LOCK_MODE"
     private val HOME_APPS_NUM = "HOME_APPS_NUM"
+    private val SHOW_APP_NAMES = "SHOW_APP_NAMES"
     private val AUTO_SHOW_KEYBOARD = "AUTO_SHOW_KEYBOARD"
     private val KEYBOARD_MESSAGE = "KEYBOARD_MESSAGE"
     private val DAILY_WALLPAPER = "DAILY_WALLPAPER"
@@ -111,6 +112,10 @@ class Prefs(context: Context) {
         get() = prefs.getBoolean(LOCK_MODE, false)
         set(value) = prefs.edit().putBoolean(LOCK_MODE, value).apply()
 
+    var toggleAppVisibility: Boolean
+        get() = prefs.getBoolean(SHOW_APP_NAMES, false)
+        set(value) = prefs.edit().putBoolean(SHOW_APP_NAMES, value).apply()
+
     var autoShowKeyboard: Boolean
         get() = prefs.getBoolean(AUTO_SHOW_KEYBOARD, true)
         set(value) = prefs.edit().putBoolean(AUTO_SHOW_KEYBOARD, value).apply()
@@ -128,7 +133,7 @@ class Prefs(context: Context) {
         set(value) = prefs.edit().putString(DAILY_WALLPAPER_URL, value).apply()
 
     var homeAppsNum: Int
-        get() = prefs.getInt(HOME_APPS_NUM, 4)
+        get() = prefs.getInt(HOME_APPS_NUM, 0)
         set(value) = prefs.edit().putInt(HOME_APPS_NUM, value).apply()
 
     var homeAlignment: Int
