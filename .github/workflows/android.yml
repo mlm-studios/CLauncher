@@ -12,12 +12,14 @@ concurrency:
 env:
   JAVA_VERSION: '21'
   JAVA_DISTRIBUTION: 'corretto'
+  VERSION_PROPS_FILE: 'version.properties'
 
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
     permissions:
       contents: write  # Needed for creating releases
+      issues: write    # Needed for creating issues on failure
 
     steps:
       - name: Generate Build Date
@@ -28,6 +30,48 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 1 
+
+      - name: Update Version
+        run: |
+          if [ -f $VERSION_PROPS_FILE ]; then
+            # Read current version
+            version=$(grep "version_name" $VERSION_PROPS_FILE | cut -d'=' -f2)
+            code=$(grep "version_code" $VERSION_PROPS_FILE | cut -d'=' -f2)
+            
+            # Split version into parts
+            IFS='.' read -ra ADDR <<< "$version"
+            major="${ADDR[0]}"
+            minor="${ADDR[1]}"
+            patch="${ADDR[2]}"
+            build="${ADDR[3]}"
+            
+            # Increment build number
+            new_build=$((build + 1))
+            new_code=$((code + 10))
+            
+            # Create new version string
+            new_version="$major.$minor.$patch.$new_build"
+            
+            # Update version.properties
+            echo "version_name=$new_version" > $VERSION_PROPS_FILE
+            echo "version_code=$new_code" >> $VERSION_PROPS_FILE
+          else
+            # Create initial version file
+            echo "version_name=0.0.0.1" > $VERSION_PROPS_FILE
+            echo "version_code=100" >> $VERSION_PROPS_FILE
+            new_version="0.0.0.1"
+            new_code="100"
+          fi
+          
+          echo "VERSION_NAME=$new_version" >> $GITHUB_ENV
+          echo "VERSION_CODE=$new_code" >> $GITHUB_ENV
+          
+          # Commit and push version update
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git add $VERSION_PROPS_FILE
+          git commit -m "Bump version to $new_version (code: $new_code) [skip ci]" || echo "No changes to commit"
+          git push
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -41,6 +85,33 @@ jobs:
         with:
           gradle-home-cache-cleanup: true
 
+      # - name: Decode Keystore
+      #   run: |
+      #     echo "${{ secrets.KEYSTORE }}" > release.keystore.asc
+      #     gpg -d --passphrase "${{ secrets.KEYSTORE_PASSPHRASE }}" --batch release.keystore.asc > release.keystore
+
+      - name: Run Tests
+        id: tests
+        continue-on-error: true
+        run: ./gradlew test
+
+      # - name: Build Signed APK
+      #   id: build
+      #   continue-on-error: true
+      #   run: |
+      #     ./gradlew assembleRelease \
+      #       -Pandroid.injected.signing.store.file=$PWD/release.keystore \
+      #       -Pandroid.injected.signing.store.password=${{ secrets.STORE_PASSWORD }} \
+      #       -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
+      #       -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
+      #     mkdir -p artifacts
+
+      - name: Check Build Status
+        if: steps.build.outcome == 'failure' || steps.tests.outcome == 'failure'
+        run: |
+          echo "Build or tests failed!"
+          exit 1
+
       - name: Build APK
         run: |
           ./gradlew assembleDebug --no-daemon
@@ -48,27 +119,41 @@ jobs:
 
       - name: Prepare APK for Release
         run: |
-          ls
-          cp app/build/outputs/apk/foss/debug/*.apk \
-          artifacts/clauncher-${{ env.BUILD_DATE }}.apk
+          ls app/build/outputs/apk/*/*
+          cp app/build/outputs/apk/debug/*.apk \
+          artifacts/clauncher-${{ env.VERSION_NAME }}.apk
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          files: artifacts/clauncher-${{ env.BUILD_DATE }}.apk
-          name: "CLauncher bi-monthly Build | ${{ env.BUILD_DATE }}"
-          tag_name: "bimonthly-${{ env.BUILD_DATE }}"
-          prerelease: true
+          files: artifacts/clauncher-${{ env.VERSION_NAME }}.apk
+          name: "CLauncher v${{ env.VERSION_NAME }}"
+          tag_name: "v${{ env.VERSION_NAME }}"
+          prerelease: false
           body: |
-            ## 📱 CLauncher bi-monthly Build
+            ## 📱 CLauncher Release v${{ env.VERSION_NAME }}
             
             **Build Date**: ${{ env.BUILD_DATE }}
+            **Version Code**: ${{ env.VERSION_CODE }}
             
             ### 📝 Notes
             - This is an automated bi-monthly build
             
           generate_release_notes: true
 
+      - name: Notify on Failure
+        if: failure()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Build Failed for v${{ env.VERSION_NAME }}',
+              body: 'Bi-monthly build failed on ${{ env.BUILD_DATE }}'
+            })
+
       - name: Cleanup Artifacts
         if: always()
-        run: rm -rf artifacts/
+        run: rm -rf artifacts/.injected.signing.store.file=$PWD/release.keystore \
+            -
