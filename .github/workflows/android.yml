@@ -86,10 +86,9 @@ jobs:
         
       - name: Update Version Code for Architecture
         run: |
-          ARCH_VERSION_CODE=$(($ {{ needs.prepare-version.outputs.base_version_code }} ${{ matrix.version_offset }}))
+          ARCH_VERSION_CODE=$((${{needs.prepare-version.outputs.base_version_code}}${{matrix.version_offset}}))
           sed -i "s/versionCode [0-9]*/versionCode $ARCH_VERSION_CODE/" $BUILD_GRADLE_PATH
-          sed -i "s/versionName \".*\"/versionName \"${{ needs.prepare-version.outputs.version_name }}\"/" $BUILD_GRADLE_PATH
-
+          
       - name: Decode Keystore
         run: |
           echo "${{ secrets.KEYSTORE }}" > release.keystore.asc
