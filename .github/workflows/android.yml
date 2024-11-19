@@ -53,14 +53,12 @@ jobs:
           fi
 
           # Construct new version name
-          NEW_VERSION_NAME="${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.${VERSION_PARTS[2]}.b1"
-          
+          NEW_VERSION_NAME="${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.${VERSION_PARTS[2]}"
 
           # Update build.gradle
           sed -i "s/versionCode $OLD_VERSION_CODE/versionCode $NEW_VERSION_CODE/" $BUILD_GRADLE_PATH
           sed -i "s/versionName \"$OLD_VERSION_NAME\"/versionName \"$NEW_VERSION_NAME\"/" $BUILD_GRADLE_PATH
 
-          NEW_VERSION_NAME="${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.${VERSION_PARTS[2]}"
           echo "VERSION_NAME=$NEW_VERSION_NAME" >> $GITHUB_ENV
           echo "VERSION_CODE=$NEW_VERSION_CODE" >> $GITHUB_ENV
 
@@ -88,9 +86,21 @@ jobs:
         continue-on-error: true
         run: ./gradlew test
 
-      - name: Build APK
+      - name: Decode Keystore
         run: |
-          ./gradlew assembleDebug --no-daemon
+          echo "${{ secrets.KEYSTORE }}" > release.keystore.asc
+          gpg -d --passphrase "${{ secrets.KEYSTORE_PASSPHRASE }}" --batch release.keystore.asc > release.keystore
+
+
+      - name: Build Signed APK
+        id: build
+        continue-on-error: true
+        run: |
+          ./gradlew assembleRelease \
+            -Pandroid.injected.signing.store.file=release.keystore \
+            -Pandroid.injected.signing.store.password=${{ secrets.STORE_PASSWORD }} \
+            -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
+            -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
           mkdir -p artifacts
 
       - name: Prepare APKs for Release
@@ -102,10 +112,10 @@ jobs:
           mkdir -p artifacts/x86_64
 
           # Copy APKs to respective directories
-          find app/build/outputs/apk/debug/ -name "*arm64-v8a-debug.apk" -exec cp {} artifacts/arm64-v8a/clauncher-${{ env.VERSION_NAME }}-arm64-v8a.apk \;
-          find app/build/outputs/apk/debug/ -name "*armeabi-v7a-debug.apk" -exec cp {} artifacts/armeabi-v7a/clauncher-${{ env.VERSION_NAME }}-armeabi-v7a.apk \;
-          find app/build/outputs/apk/debug/ -name "*x86-debug.apk" -exec cp {} artifacts/x86/clauncher-${{ env.VERSION_NAME }}-x86.apk \;
-          find app/build/outputs/apk/debug/ -name "*x86_64-debug.apk" -exec cp {} artifacts/x86_64/clauncher-${{ env.VERSION_NAME }}-x86_64.apk \;
+          find app/build/outputs/apk/release/ -name "*arm64-v8a-release.apk" -exec cp {} artifacts/arm64-v8a/clauncher-${{ env.VERSION_NAME }}-arm64-v8a.apk \;
+          find app/build/outputs/apk/release/ -name "*armeabi-v7a-release.apk" -exec cp {} artifacts/armeabi-v7a/clauncher-${{ env.VERSION_NAME }}-armeabi-v7a.apk \;
+          find app/build/outputs/apk/release/ -name "*x86-release.apk" -exec cp {} artifacts/x86/clauncher-${{ env.VERSION_NAME }}-x86.apk \;
+          find app/build/outputs/apk/release/ -name "*x86_64-release.apk" -exec cp {} artifacts/x86_64/clauncher-${{ env.VERSION_NAME }}-x86_64.apk \;
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
