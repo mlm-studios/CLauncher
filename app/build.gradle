@@ -37,10 +37,10 @@ android {
 
     signingConfigs {
         release {
-        storeFile file(System.getenv("KEYSTORE_PATH") ?: "${rootProject.projectDir}/release.keystore")
-        storePassword System.getenv("STORE_PASSWORD")
-        keyAlias System.getenv("KEY_ALIAS")
-        keyPassword System.getenv("KEY_PASSWORD")
+            storeFile file(System.getenv("KEYSTORE_PATH") ?: "${rootProject.projectDir}/release.keystore")
+            storePassword System.getenv("STORE_PASSWORD")
+            keyAlias System.getenv("KEY_ALIAS")
+            keyPassword System.getenv("KEY_PASSWORD")
         }
     }
 
@@ -50,6 +50,8 @@ android {
             debuggable false
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // Enable reproducible builds
+            buildConfigField "Long", "BUILD_TIME", "0L"
         }
         debug {
             debuggable true
@@ -58,10 +60,44 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     buildFeatures {
         viewBinding = true
     }
+    
     namespace 'app.clauncher'
+
+    // Add reproducible build configurations
+    aaptOptions {
+        cruncherEnabled = false
+    }
+
+    // Enable reproducible build output
+    dependenciesInfo {
+        includeInApk = false
+    }
+}
+
+// Add a task to sort the files in the APK
+tasks.withType(com.android.build.gradle.tasks.PackageApplication).configureEach {
+    zip64 = true
+    doLast {
+        android.applicationVariants.all { variant ->
+            variant.outputs.all { output ->
+                output.outputFile.withInputStream { fis ->
+                    def sortedEntries = new java.util.zip.ZipInputStream(fis).withCloseable { zin ->
+                        def entries = []
+                        def entry
+                        while ((entry = zin.nextEntry) != null) {
+                            entries << entry.name
+                        }
+                        entries.sort()
+                        return entries
+                    }
+                }
+            }
+        }
+    }
 }
 
 dependencies {
@@ -83,5 +119,4 @@ dependencies {
 
     //Material dependency
     implementation libs.material
-
 }
