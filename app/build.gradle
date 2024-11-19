@@ -74,11 +74,12 @@ android {
     dependenciesInfo {
         includeInApk = false
     }
+}
 
-    // Enable reproducible builds
-    tasks.withType(com.android.build.gradle.tasks.PackageApplication).configureEach {
-        from.forEach { it.fileMode = 0644 }
-    }
+// Configure all tasks that are instances of AbstractArchiveTask
+tasks.withType(AbstractArchiveTask).configureEach {
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
 }
 
 dependencies {
