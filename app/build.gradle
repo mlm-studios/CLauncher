@@ -108,14 +108,20 @@ dependencies {
     //Material dependency
     implementation libs.material
 }
+
 tasks.register('verifyReleaseApk') {
     dependsOn 'assembleRelease'
     doLast {
         def apkDir = new File("${buildDir}/outputs/apk/release/")
+        def androidSdkPath = android.getSdkDirectory().getAbsolutePath()
+        def buildToolsVersion = android.getBuildToolsVersion()
+        def apksignerPath = "${androidSdkPath}/build-tools/${buildToolsVersion}/apksigner"
+
         apkDir.eachFileRecurse { file ->
             if (file.name.endsWith('.apk')) {
+                println "Verifying APK: ${file.name}"
                 exec {
-                    commandLine android.getAdbExe().toString(), 'verify', file.absolutePath
+                    commandLine apksignerPath, 'verify', '--verbose', file.absolutePath
                 }
             }
         }
