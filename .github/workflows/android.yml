@@ -70,7 +70,7 @@ jobs:
           - arch: armeabi-v7a
             version_offset: -1
           - arch: arm64-v8a
-            version_offset: 0
+            version_offset: -0
 
     steps:
       - uses: actions/checkout@v4
