@@ -55,6 +55,8 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "Long", "BUILD_TIME", "0L"
+            shrinkResources true
+            zipAlignEnabled true
         }
         debug {
             debuggable true
