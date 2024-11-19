@@ -115,7 +115,7 @@ jobs:
           prerelease: false
           fail_on_unmatched_files: false
           body: |
-            ## 📱 CLauncher Release ${{ needs.prepare-version.outputs.version_name }}
+            ## CLauncher Release ${{ needs.prepare-version.outputs.version_name }}
             
             **Build Date**: ${{ needs.prepare-version.outputs.BUILD_DATE }}
             **Base Version Code**: ${{ needs.prepare-version.outputs.base_version_code }}
