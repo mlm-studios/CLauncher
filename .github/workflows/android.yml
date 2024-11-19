@@ -92,11 +92,11 @@ jobs:
           gpg -d --passphrase "${{ secrets.KEYSTORE_PASSPHRASE }}" --batch release.keystore.asc > release.keystore
 
 
-      - name: Build Signed APK
+      - name: Build Signed APK and Verify
         id: build
         continue-on-error: true
         run: |
-          ./gradlew assembleRelease \
+          ./gradlew assembleRelease verifyReleaseApk \
             -Pandroid.injected.signing.store.file=$PWD/release.keystore \
             -Pandroid.injected.signing.store.password=${{ secrets.STORE_PASSWORD }} \
             -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
