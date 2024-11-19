@@ -62,7 +62,7 @@ android {
 
     buildFeatures {
         viewBinding = true
-        buildConfig = true  // Added this line
+        buildConfig = true
     }
     
     namespace 'app.clauncher'
@@ -74,26 +74,10 @@ android {
     dependenciesInfo {
         includeInApk = false
     }
-}
 
-tasks.withType(com.android.build.gradle.tasks.PackageApplication).configureEach {
-    zip64 = true
-    doLast {
-        android.applicationVariants.all { variant ->
-            variant.outputs.all { output ->
-                output.outputFile.withInputStream { fis ->
-                    def sortedEntries = new java.util.zip.ZipInputStream(fis).withCloseable { zin ->
-                        def entries = []
-                        def entry
-                        while ((entry = zin.nextEntry) != null) {
-                            entries << entry.name
-                        }
-                        entries.sort()
-                        return entries
-                    }
-                }
-            }
-        }
+    // Enable reproducible builds
+    tasks.withType(com.android.build.gradle.tasks.PackageApplication).configureEach {
+        from.forEach { it.fileMode = 0644 }
     }
 }
 
