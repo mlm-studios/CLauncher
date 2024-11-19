@@ -41,6 +41,10 @@ android {
             storePassword System.getenv("STORE_PASSWORD")
             keyAlias System.getenv("KEY_ALIAS")
             keyPassword System.getenv("KEY_PASSWORD")
+            v1SigningEnabled true
+            v2SigningEnabled true
+            enableV3Signing false
+            enableV4Signing false
         }
     }
 
