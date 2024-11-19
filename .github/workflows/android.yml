@@ -17,6 +17,8 @@ env:
 jobs:
   prepare-version:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     outputs:
       version_name: ${{ steps.version.outputs.version_name }}
       base_version_code: ${{ steps.version.outputs.version_code }}
