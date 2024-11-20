@@ -25,15 +25,6 @@ android {
         jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
-    packagingOptions {
-        exclude 'META-INF/version-control-info.textproto'
-    }
-
-
-    versionControlInfo {
-        enabled = false
-    }
-
     defaultConfig {
         applicationId 'app.clauncher'
         minSdkVersion 24
@@ -51,6 +42,7 @@ android {
             storePassword System.getenv("STORE_PASSWORD")
             keyAlias System.getenv("KEY_ALIAS")
             keyPassword System.getenv("KEY_PASSWORD")
+            vcsInfo.include false
             v1SigningEnabled true
             v2SigningEnabled true
             enableV3Signing false
