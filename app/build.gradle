@@ -29,8 +29,8 @@ android {
         applicationId 'app.clauncher'
         minSdkVersion 24
         targetSdkVersion 34
-        versionCode 240
-        versionName "v4.3.18"
+        versionCode 250
+        versionName "v4.3.19"
 
         resourceConfigurations += ["en", "ar", "de", "es-rES", "es-rUS", "fr", "hr", "hu", "in", "it", "ja", "pl", "pt-rBR", "ru-rRU", "sv", "tr", "uk", "zh"]
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
