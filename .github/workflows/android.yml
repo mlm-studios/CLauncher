@@ -84,10 +84,11 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
         
-      - name: Update Version Code for Architecture
+      - name: Update Version Code and Version Name for Architecture
         run: |
           ARCH_VERSION_CODE=$((${{needs.prepare-version.outputs.base_version_code}} + ${{matrix.version_offset}}))
           sed -i "s/versionCode [0-9]*/versionCode $ARCH_VERSION_CODE/" $BUILD_GRADLE_PATH
+          sed -i "s/versionName \"[0-9\.]*\"/versionName \"${{needs.prepare-version.outputs.base_version_name}}\"/" $BUILD_GRADLE_PATH
           
       - name: Decode Keystore
         run: |
