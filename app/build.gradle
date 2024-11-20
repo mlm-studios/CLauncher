@@ -4,15 +4,6 @@ plugins {
 }
 
 android {
-
-    packagingOptions {
-        exclude 'META-INF/version-control-info.textproto'
-    }
-
-
-    versionControlInfo {
-        enabled = false
-    }
     
     compileSdk 34
 
@@ -32,6 +23,15 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17.toString()
+    }
+
+    packagingOptions {
+        exclude 'META-INF/version-control-info.textproto'
+    }
+
+
+    versionControlInfo {
+        enabled = false
     }
 
     defaultConfig {
