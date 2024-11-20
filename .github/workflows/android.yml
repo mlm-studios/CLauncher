@@ -20,6 +20,7 @@ jobs:
     permissions:
       contents: write
     outputs:
+      old_version_name: ${{ steps.version.outputs.old_version_name }}
       version_name: ${{ steps.version.outputs.version_name }}
       base_version_code: ${{ steps.version.outputs.version_code }}
     steps:
@@ -35,7 +36,8 @@ jobs:
           MINOR=$((VERSION_PARTS[2] + 1))
           VERSION_PARTS[2]=$MINOR
           NEW_VERSION_NAME="${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.${VERSION_PARTS[2]}"
-          
+
+          echo "old_version_name=$OLD_VERSION_NAME" >> $GITHUB_OUTPUT
           echo "version_name=$NEW_VERSION_NAME" >> $GITHUB_OUTPUT
           echo "version_code=$NEW_VERSION_CODE" >> $GITHUB_OUTPUT
           echo "BUILD_DATE=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
@@ -88,7 +90,7 @@ jobs:
         run: |
           ARCH_VERSION_CODE=$((${{needs.prepare-version.outputs.base_version_code}} + ${{matrix.version_offset}}))
           sed -i "s/versionCode [0-9]*/versionCode $ARCH_VERSION_CODE/" $BUILD_GRADLE_PATH
-          sed -i "s/versionName \"[0-9\.]*\"/versionName \"${{needs.prepare-version.outputs.version_name}}\"/" $BUILD_GRADLE_PATH
+          sed -i "s/versionName \"${{needs.prepare-version.outputs.old_version_name}}\"/versionName \"${{needs.prepare-version.outputs.version_name}}\"/" $BUILD_GRADLE_PATH
           
       - name: Decode Keystore
         run: |
