@@ -4,6 +4,16 @@ plugins {
 }
 
 android {
+
+    packagingOptions {
+        exclude 'META-INF/version-control-info.textproto'
+    }
+
+
+    versionControlInfo {
+        enabled = false
+    }
+    
     compileSdk 34
 
     splits {
@@ -46,10 +56,6 @@ android {
             enableV3Signing false
             enableV4Signing false
         }
-    }
-
-    packagingOptions {
-        exclude 'META-INF/version-control-info.textproto'
     }
 
     buildTypes {
