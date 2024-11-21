@@ -103,8 +103,8 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
             R.id.showApps -> toggleAppVisibility()
             R.id.autoShowKeyboard -> toggleKeyboardText()
             R.id.homeAppsNum -> binding.appsNumSelectLayout.visibility = View.VISIBLE
-            R.id.dailyWallpaperUrl -> requireContext().openUrl(prefs.dailyWallpaperUrl)
-            //R.id.dailyWallpaper -> toggleDailyWallpaperUpdate()
+            //R.id.plainWallpaperUrl -> requireContext().openUrl(prefs.plainWallpaperUrl)
+            R.id.plainWallpaper -> setPlainWallpaper()
             R.id.alignment -> binding.alignmentSelectLayout.visibility = View.VISIBLE
             R.id.alignmentLeft -> viewModel.updateHomeAlignment(Gravity.START)
             R.id.alignmentCenter -> viewModel.updateHomeAlignment(Gravity.CENTER)
@@ -176,7 +176,6 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
                 requireContext().showToast(getString(R.string.alignment_changed))
             }
 
-            R.id.dailyWallpaper -> removeWallpaper()
             R.id.appThemeText -> {
                 binding.appThemeSelectLayout.visibility = View.VISIBLE
                 binding.themeSystem.visibility = View.VISIBLE
@@ -201,8 +200,7 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         binding.toggleLock.setOnClickListener(this)
         binding.homeAppsNum.setOnClickListener(this)
         binding.screenTimeOnOff.setOnClickListener(this)
-        binding.dailyWallpaperUrl.setOnClickListener(this)
-        binding.dailyWallpaper.setOnClickListener(this)
+        binding.plainWallpaper.setOnClickListener(this)
         binding.alignment.setOnClickListener(this)
         binding.alignmentLeft.setOnClickListener(this)
         binding.alignmentCenter.setOnClickListener(this)
@@ -252,7 +250,6 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         binding.textSize6.setOnClickListener(this)
         binding.textSize7.setOnClickListener(this)
 
-        binding.dailyWallpaper.setOnLongClickListener(this)
         binding.alignment.setOnLongClickListener(this)
         binding.appThemeText.setOnLongClickListener(this)
         binding.swipeLeftApp.setOnLongClickListener(this)
@@ -422,12 +419,13 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         }
     }
 
-    private fun removeWallpaper() {
+    private fun setPlainWallpaper() {
         setPlainWallpaper(requireContext(), android.R.color.black)
-        if (!prefs.dailyWallpaper) return
-        prefs.dailyWallpaper = false
+        prefs.plainWallpaper = true
+        if (prefs.plainWallpaper == true) {
+            showWallpaperToasts()
+        }
         populateWallpaperText()
-        viewModel.cancelWallpaperWorker()
     }
 
 //    private fun toggleDailyWallpaperUpdate() {
@@ -444,11 +442,8 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
 //    }
 
     private fun showWallpaperToasts() {
-        if (isClauncherDefault(requireContext()))
-            requireContext().showToast(getString(R.string.your_wallpaper_will_update_shortly))
-        else
-            requireContext().showToast(getString(R.string.clauncher_is_not_default_launcher), Toast.LENGTH_LONG)
-    }
+        requireContext().showToast(getString(R.string.change_to_your_preferred_wallpaper_in_settings))
+   }
 
     private fun updateHomeAppsNum(num: Int) {
         binding.homeAppsNum.text = num.toString()
@@ -489,9 +484,8 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
 
     private fun setAppTheme(theme: Int) {
         if (AppCompatDelegate.getDefaultNightMode() == theme) return
-        if (prefs.dailyWallpaper) {
+        if (prefs.plainWallpaper) {
             setPlainWallpaper(theme)
-            viewModel.setWallpaperWorker()
         }
         requireActivity().recreate()
     }
@@ -547,8 +541,8 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
     }
 
     private fun populateWallpaperText() {
-        if (prefs.dailyWallpaper) binding.dailyWallpaper.text = getString(R.string.on)
-        else binding.dailyWallpaper.text = getString(R.string.off)
+        if (prefs.plainWallpaper) binding.plainWallpaper.text = getString(R.string.on)
+        else binding.plainWallpaper.text = getString(R.string.off)
     }
 
     private fun updateHomeBottomAlignment() {

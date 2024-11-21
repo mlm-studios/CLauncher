@@ -23,7 +23,6 @@
     <string name="donate">Donazioni</string>
     <string name="swipe_up_for_apps">1. Scorri verso l\'alto per tutte le app\n2. Premi a lungo in qualsiasi punto per le impostazioni</string>
     <string name="apps_on_home_screen">App sulla schermata iniziale</string>
-    <string name="daily_wallpaper_update">Nuovo sfondo quotidiano</string>
     <string name="left">Sinistra</string>
     <string name="right">Destra</string>
     <string name="center">Centrato</string>
@@ -115,7 +114,7 @@
     <string name="swipe_right_app_enabled">Scorri verso destra per abilitare app</string>
     <string name="swipe_left_app_disabled">Scorri verso sinistra per disabilitare l’app</string>
     <string name="swipe_right_app_disabled">Scorri verso destra per disabilitare app </string>
-    <string name="your_wallpaper_will_update_shortly">Lo sfondo verrà aggiornato a breve</string>
+    <string name="change_to_your_preferred_wallpaper_in_settings">Lo sfondo verrà aggiornato a breve</string>
     <string name="clauncher_is_not_default_launcher">Clauncher non è il programma di avvio predefinito.\nL\'aggiornamento giornaliero dello sfondo potrebbe non riuscire.</string>
     <string name="long_press_to_enable">Premere a lungo per abilitare</string>
     <string name="no_hidden_apps">Nessuna app nascosta</string>

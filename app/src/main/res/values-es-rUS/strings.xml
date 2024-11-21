@@ -24,7 +24,6 @@
     <string name="donate">Donar</string>
     <string name="swipe_up_for_apps">1. Deslize hacia arriba para todas las aplicaciones\n2. Mantenga pulsado en cualquier lugar para la configuración</string>
     <string name="apps_on_home_screen">Aplicaciones en la pantalla de inicio</string>
-    <string name="daily_wallpaper_update">Fondo nuevo de pantalla diario </string>
     <string name="left">Izquierda</string>
     <string name="right">Derecha</string>
     <string name="center">Centro</string>
@@ -113,7 +112,7 @@
     <string name="swipe_right_app_enabled">Deslizar a la derecha - Activado</string>
     <string name="swipe_left_app_disabled">Deslizar a la izquierda - Desactivado</string>
     <string name="swipe_right_app_disabled">Deslizar a la derecha - Desactivado</string>
-    <string name="your_wallpaper_will_update_shortly">El fondo de pantalla se actualizará en breve</string>
+    <string name="change_to_your_preferred_wallpaper_in_settings">El fondo de pantalla se actualizará en breve</string>
     <string name="clauncher_is_not_default_launcher">Clauncher no es el lanzador principal. La actualización diaria del fondo de pantalla puede fallar.</string>
     <string name="long_press_to_enable">Mantenga presionado para habilitar</string>
     <string name="no_hidden_apps">Sin aplicaciones ocultas</string>

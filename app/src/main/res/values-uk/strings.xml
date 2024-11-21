@@ -24,7 +24,6 @@
     <string name="donate">Пожертвувати</string>
     <string name="swipe_up_for_apps">1. Проведіть вгору, щоб відкрити всі програми.\n2. Тривалим натисканням будь-де відкриваються налаштування</string>
     <string name="apps_on_home_screen">Кількість програм на головному екрані</string>
-    <string name="daily_wallpaper_update">Щодня нові шпалери</string>
     <string name="left">Ліворуч</string>
     <string name="right">Праворуч</string>
     <string name="center">По центру</string>
@@ -116,7 +115,7 @@
     <string name="swipe_right_app_enabled">Додаток для правого свайпа включено</string>
     <string name="swipe_left_app_disabled">Додаток для лівого свайпа вимкнено</string>
     <string name="swipe_right_app_disabled">Додаток для правого свайпа вимкнено</string>
-    <string name="your_wallpaper_will_update_shortly">Ваші шпалери незабаром оновляться</string>
+    <string name="change_to_your_preferred_wallpaper_in_settings">Ваші шпалери незабаром оновляться</string>
     <string name="clauncher_is_not_default_launcher">Clauncher не є стандартним лаунчером.\nЩоденне оновлення шпалер може завершитися помилкою.</string>
     <string name="long_press_to_enable">Натисніть та утримуйте, щоб увімкнути</string>
     <string name="no_hidden_apps">Немає прихованих додатків</string>

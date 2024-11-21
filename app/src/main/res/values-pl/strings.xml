@@ -17,7 +17,7 @@
     <string name="okay">OK</string>
     <string name="cool">Fajny!</string>
     <string name="tip_start_typing_for_rename">Wskazówka: zacznij pisać by zmienić nazwę aplikacji</string>
-    <string name="your_wallpaper_will_update_shortly">Twoja tapeta zostanie wkrótce zaktualizowana</string>
+    <string name="change_to_your_preferred_wallpaper_in_settings">Twoja tapeta zostanie wkrótce zaktualizowana</string>
     <string name="clauncher_is_not_default_launcher">Clauncher nie jest domyślnym programem uruchamiającym. Codzienna aktualizacja tapety może się nie powieść.</string>
     <string name="long_press_to_enable">Naciśnij długo, aby włączyć</string>
     <string name="no_hidden_apps">Brak ukrytych aplikacji</string>
@@ -69,7 +69,6 @@
     <string name="donate">Wspomóż</string>
     <string name="swipe_up_for_apps">1. Przesuń palcem w górę, aby wyświetlić wszystkie aplikacje\n2. Naciśnij i przytrzymaj dowolne miejsce, aby przejść do ustawień</string>
     <string name="apps_on_home_screen">Aplikacje na ekranie głównym</string>
-    <string name="daily_wallpaper_update">Codziennie nowa tapeta</string>
     <string name="left">Lewo</string>
     <string name="right">Prawo</string>
     <string name="center">Środek</string>

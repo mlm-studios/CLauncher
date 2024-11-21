@@ -21,7 +21,6 @@ import app.clauncher.data.Constants
 import app.clauncher.data.Constants.ONE_DAY_IN_MILLIS
 import app.clauncher.data.Prefs
 import app.clauncher.helper.SingleLiveEvent
-import app.clauncher.helper.WallpaperWorker
 import app.clauncher.helper.formattedTimeSpent
 import app.clauncher.helper.getAppsList
 import app.clauncher.helper.showToast
@@ -222,28 +221,28 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 //        launcherResetFailed.value = getDefaultLauncherPackage(appContext).contains(".")
 //    }
 
-    fun setWallpaperWorker() {
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-        val uploadWorkRequest = PeriodicWorkRequestBuilder<WallpaperWorker>(8, TimeUnit.HOURS)
-            .setBackoffCriteria(BackoffPolicy.LINEAR, 1, TimeUnit.HOURS)
-            .setConstraints(constraints)
-            .build()
-        WorkManager
-            .getInstance(appContext)
-            .enqueueUniquePeriodicWork(
-                Constants.WALLPAPER_WORKER_NAME,
-                ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
-                uploadWorkRequest
-            )
-    }
-
-    fun cancelWallpaperWorker() {
-        WorkManager.getInstance(appContext).cancelUniqueWork(Constants.WALLPAPER_WORKER_NAME)
-        prefs.dailyWallpaperUrl = ""
-        prefs.dailyWallpaper = false
-    }
+//    fun setWallpaperWorker() {
+//        val constraints = Constraints.Builder()
+//            .setRequiredNetworkType(NetworkType.CONNECTED)
+//            .build()
+//        val uploadWorkRequest = PeriodicWorkRequestBuilder<WallpaperWorker>(8, TimeUnit.HOURS)
+//            .setBackoffCriteria(BackoffPolicy.LINEAR, 1, TimeUnit.HOURS)
+//            .setConstraints(constraints)
+//            .build()
+//        WorkManager
+//            .getInstance(appContext)
+//            .enqueueUniquePeriodicWork(
+//                Constants.WALLPAPER_WORKER_NAME,
+//                ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
+//                uploadWorkRequest
+//            )
+//    }
+//
+//    fun cancelWallpaperWorker() {
+//        WorkManager.getInstance(appContext).cancelUniqueWork(Constants.WALLPAPER_WORKER_NAME)
+//        prefs.dailyWallpaperUrl = ""
+//        prefs.dailyWallpaper = false
+//    }
 
     fun updateHomeAlignment(gravity: Int) {
         prefs.homeAlignment = gravity

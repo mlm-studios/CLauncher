@@ -24,7 +24,6 @@
     <string name="donate">Donner</string>
     <string name="swipe_up_for_apps">1. Balayez vers le haut pour toutes les applications.\n2. Appuyez longuement n\'importe où pour les paramètres.</string>
     <string name="apps_on_home_screen">Applications sur l\'écran d\'accueil</string>
-    <string name="daily_wallpaper_update">Nouveau fond d\'écran quotidien</string>
     <string name="left">Gauche</string>
     <string name="right">Droite</string>
     <string name="center">Centre</string>
@@ -113,7 +112,7 @@
     <string name="swipe_right_app_enabled">Balayage vers la droite activée</string>
     <string name="swipe_left_app_disabled">Balayage vers la gauche désactivé</string>
     <string name="swipe_right_app_disabled">Balayage vers la droite désactivé</string>
-    <string name="your_wallpaper_will_update_shortly">Votre fond d\'écran sera bientôt mis à jour.</string>
+    <string name="change_to_your_preferred_wallpaper_in_settings">Votre fond d\'écran sera bientôt mis à jour.</string>
     <string name="clauncher_is_not_default_launcher">Clauncher n\'est pas le lanceur par défaut.
         La mise à jour quotidienne du fond d\'écran peut échouer.</string>
     <string name="long_press_to_enable">Appuyez longuement pour activer.</string>

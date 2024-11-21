@@ -133,8 +133,7 @@ private fun upgradeHiddenApps(prefs: Prefs) {
 fun isPackageInstalled(context: Context, packageName: String, userString: String): Boolean {
     val launcher = context.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
     val activityInfo = launcher.getActivityList(packageName, getUserHandleFromString(context, userString))
-    if (activityInfo.size > 0) return true
-    return false
+    return activityInfo.isNotEmpty()
 }
 
 fun getUserHandleFromString(context: Context, userHandleString: String): UserHandle {
@@ -180,12 +179,8 @@ fun setPlainWallpaper(context: Context, color: Int) {
         val bitmap = Bitmap.createBitmap(1000, 2000, Bitmap.Config.ARGB_8888)
         bitmap.eraseColor(context.getColor(color))
         val manager = WallpaperManager.getInstance(context)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            manager.setBitmap(bitmap, null, false, WallpaperManager.FLAG_SYSTEM)
-            manager.setBitmap(bitmap, null, false, WallpaperManager.FLAG_LOCK)
-        } else
-            manager.setBitmap(bitmap)
-        bitmap.recycle()
+        manager.setBitmap(bitmap, null, false, WallpaperManager.FLAG_SYSTEM)
+        manager.setBitmap(bitmap, null, false, WallpaperManager.FLAG_LOCK)
     } catch (e: Exception) {
         e.printStackTrace()
     }
@@ -294,38 +289,38 @@ fun getScreenDimensions(context: Context): Pair<Int, Int> {
     return Pair(point.x, point.y)
 }
 
-suspend fun getTodaysWallpaper(wallType: String): String {
-    return withContext(Dispatchers.IO) {
-        var wallpaperUrl: String
-        try {
-            val month = SimpleDateFormat("M", Locale.ENGLISH).format(Date()) ?: ""
-            val day = SimpleDateFormat("d", Locale.ENGLISH).format(Date()) ?: ""
-            val key = String.format("%s_%s", month, day)
-
-            val url = URL(Constants.URL_WALLPAPERS)
-            val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
-            connection.doInput = true
-            connection.connect()
-
-            val inputStream = connection.inputStream
-            val scanner = Scanner(inputStream)
-            val stringBuffer = StringBuffer()
-            while (scanner.hasNext()) {
-                stringBuffer.append(scanner.nextLine())
-            }
-
-            val json = JSONObject(stringBuffer.toString())
-            val wallpapers = json.getString(key)
-            val wallpapersJson = JSONObject(wallpapers)
-            wallpaperUrl = wallpapersJson.getString(wallType)
-            wallpaperUrl
-
-        } catch (e: Exception) {
-            wallpaperUrl = getBackupWallpaper(wallType)
-            wallpaperUrl
-        }
-    }
-}
+//suspend fun getTodaysWallpaper(wallType: String): String {
+//    return withContext(Dispatchers.IO) {
+//        var wallpaperUrl: String
+//        try {
+//            val month = SimpleDateFormat("M", Locale.ENGLISH).format(Date()) ?: ""
+//            val day = SimpleDateFormat("d", Locale.ENGLISH).format(Date()) ?: ""
+//            val key = String.format("%s_%s", month, day)
+//
+//            val url = URL(Constants.URL_WALLPAPERS)
+//            val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
+//            connection.doInput = true
+//            connection.connect()
+//
+//            val inputStream = connection.inputStream
+//            val scanner = Scanner(inputStream)
+//            val stringBuffer = StringBuffer()
+//            while (scanner.hasNext()) {
+//                stringBuffer.append(scanner.nextLine())
+//            }
+//
+//            val json = JSONObject(stringBuffer.toString())
+//            val wallpapers = json.getString(key)
+//            val wallpapersJson = JSONObject(wallpapers)
+//            wallpaperUrl = wallpapersJson.getString(wallType)
+//            wallpaperUrl
+//
+//        } catch (e: Exception) {
+//            wallpaperUrl = getBackupWallpaper(wallType)
+//            wallpaperUrl
+//        }
+//    }
+//}
 
 fun getBackupWallpaper(wallType: String): String {
     return if (wallType == Constants.WALL_TYPE_LIGHT)
