@@ -71,7 +71,7 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         populateKeyboardText()
         populateScreenTimeOnOff()
         populateLockSettings()
-        populateWallpaperText()
+        //populateWallpaperText()
         populateAppThemeText()
         populateTextSize()
         populateAlignment()
@@ -421,11 +421,11 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
 
     private fun setPlainWallpaper() {
         setPlainWallpaper(requireContext(), android.R.color.black)
-        prefs.plainWallpaper = true
         if (prefs.plainWallpaper == true) {
             showWallpaperToasts()
         }
-        populateWallpaperText()
+        //populateWallpaperText()
+        prefs.plainWallpaper = !prefs.plainWallpaper
     }
 
 //    private fun toggleDailyWallpaperUpdate() {
@@ -540,10 +540,10 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         else binding.autoShowKeyboard.text = getString(R.string.off)
     }
 
-    private fun populateWallpaperText() {
-        if (prefs.plainWallpaper) binding.plainWallpaper.text = getString(R.string.on)
-        else binding.plainWallpaper.text = getString(R.string.off)
-    }
+//    private fun populateWallpaperText() {
+//        if (prefs.plainWallpaper) binding.plainWallpaper.text = getString(R.string.on)
+//        else binding.plainWallpaper.text = getString(R.string.off)
+//    }
 
     private fun updateHomeBottomAlignment() {
 //        if (viewModel.isClauncherDefault.value != true) {
