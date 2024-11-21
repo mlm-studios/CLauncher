@@ -30,7 +30,7 @@ android {
         minSdkVersion 24
         targetSdkVersion 34
         versionCode 260
-        versionName "v4.3.20"
+        versionName "v5.0.0"
 
         resourceConfigurations += ["en", "ar", "de", "es-rES", "es-rUS", "fr", "hr", "hu", "in", "it", "ja", "pl", "pt-rBR", "ru-rRU", "sv", "tr", "uk", "zh"]
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
