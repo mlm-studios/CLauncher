@@ -14,7 +14,7 @@ If you need to rename or hide any apps, you could show the apps and then perform
     alt="Get it on F-Droid"
     height="80">](https://f-droid.org/packages/app.clauncher)
 
-To maintain the simplicity of the original Clauncher, a few niche features are available but hidden.
+To maintain the simplicity of the original Olauncher, a few niche features are available but hidden.
 
 ##
 
