@@ -173,7 +173,7 @@ class AppDrawerAdapter(
                         append(if (appModel.isNew == true) " (New)" else "")
                     }
                     appTitle.gravity = appLabelGravity
-                    otherProfileIndicator.isVisible = appModel.user != myUserHandle
+                    //otherProfileIndicator.isVisible = appModel.user != myUserHandle
 
                     appTitle.setOnClickListener { clickListener(appModel) }
                     appTitle.setOnLongClickListener {

@@ -194,7 +194,6 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         binding.appInfo.setOnClickListener(this)
         binding.setLauncher.setOnClickListener(this)
         binding.aboutClauncher.setOnClickListener(this)
-        binding.clauncherPro.setOnClickListener(this)
         binding.autoShowKeyboard.setOnClickListener(this)
         binding.showApps?.setOnClickListener(this)
         binding.toggleLock.setOnClickListener(this)
