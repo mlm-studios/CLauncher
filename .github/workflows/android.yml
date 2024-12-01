@@ -135,6 +135,7 @@ jobs:
             - ARM (32-bit): clauncher-${{ needs.prepare-version.outputs.version_name }}-armeabi-v7a.apk
             - x86 (32-bit): clauncher-${{ needs.prepare-version.outputs.version_name }}-x86.apk
             - x86_64 (64-bit): clauncher-${{ needs.prepare-version.outputs.version_name }}-x86_64.apk
+          generate_release_notes: true
 
       - name: Log build.gradle
         run: cat $BUILD_GRADLE_PATH
