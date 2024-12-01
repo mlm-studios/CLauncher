@@ -77,7 +77,9 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="12dp"
                     android:layout_marginBottom="8dp"
-                    android:text="@string/about_clauncher" />
+                    android:text="@string/about_clauncher"
+                    android:visibility="visible"
+                    tools:visibility="visible" />
 
             </LinearLayout>
 
