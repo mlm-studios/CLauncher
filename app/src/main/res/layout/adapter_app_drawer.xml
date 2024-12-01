@@ -16,16 +16,16 @@
         android:paddingVertical="@dimen/app_padding_vertical"
         android:text="@string/app" />
 
-    <ImageView
-        android:id="@+id/otherProfileIndicator"
-        android:layout_width="4dp"
-        android:layout_height="4dp"
-        android:layout_gravity="center_vertical"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="1dp"
-        android:gravity="center"
-        android:src="@drawable/ic_rounded"
-        app:tint="?attr/primaryColor" />
+<!--    <ImageView-->
+<!--        android:id="@+id/otherProfileIndicator"-->
+<!--        android:layout_width="4dp"-->
+<!--        android:layout_height="4dp"-->
+<!--        android:layout_gravity="center_vertical"-->
+<!--        android:layout_marginStart="8dp"-->
+<!--        android:layout_marginTop="1dp"-->
+<!--        android:gravity="center"-->
+<!--        android:src="@drawable/ic_rounded"-->
+<!--        app:tint="?attr/primaryColor" />-->
 
     <LinearLayout
         android:id="@+id/appHideLayout"
