@@ -79,16 +79,6 @@
                     android:layout_marginBottom="8dp"
                     android:text="@string/about_clauncher" />
 
-                <TextView
-                    android:id="@+id/clauncherPro"
-                    style="@style/TextSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginBottom="8dp"
-                    android:text="@string/clauncher_pro" />
-
             </LinearLayout>
 
             <LinearLayout
@@ -429,7 +419,8 @@
                     android:layout_marginTop="12dp"
                     android:animateLayoutChanges="true"
                     android:clipChildren="false"
-                    android:clipToPadding="false">
+                    android:clipToPadding="false"
+                    android:visibility="gone">
 
                     <TextView
                         style="@style/TextSmall"
