@@ -151,4 +151,5 @@
     <string name="alignment_changed">Alignment changed ✅</string>
     <string name="home_screen">Home screen</string>
     <string name="show_app_names">Show app names</string>
+    <string name="set">Set</string>
 </resources>

@@ -558,7 +558,7 @@
                         android:layout_gravity="end|bottom"
                         android:layout_marginEnd="4dp"
                         android:padding="8dp"
-                        android:text="Set" />
+                        android:text="@string/set" />
                 </FrameLayout>
 
                 <FrameLayout
