@@ -245,7 +245,7 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
     private fun populateScreenTime() {
         if (requireContext().appUsagePermissionGranted().not()) return
 
-        viewModel.getTodaysScreenTime()
+        viewModel.getScreenTimeStats()
         binding.tvScreenTime.visibility = View.VISIBLE
 
         val isLandscape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -465,39 +465,6 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
             }
         }
     }
-
-//    private fun changeAppTheme() {
-//        if (prefs.plainWallpaper.not()) return
-//        val changedAppTheme = getChangedAppTheme(requireContext(), prefs.appTheme)
-//        prefs.appTheme = changedAppTheme
-//        if (prefs.plainWallpaper) {
-//            setPlainWallpaperByTheme(requireContext(), changedAppTheme)
-//            viewModel.setWallpaperWorker()
-//        }
-//        requireActivity().recreate()
-//    }
-//
-//    private fun openScreenTimeDigitalWellbeing() {
-//        val intent = Intent()
-//        try {
-//            intent.setClassName(
-//                Constants.DIGITAL_WELLBEING_PACKAGE_NAME,
-//                Constants.DIGITAL_WELLBEING_ACTIVITY
-//            )
-//            startActivity(intent)
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//            try {
-//                intent.setClassName(
-//                    Constants.DIGITAL_WELLBEING_SAMSUNG_PACKAGE_NAME,
-//                    Constants.DIGITAL_WELLBEING_SAMSUNG_ACTIVITY
-//                )
-//                startActivity(intent)
-//            } catch (e: Exception) {
-//                e.printStackTrace()
-//            }
-//        }
-//    }
 
     private fun showLongPressToast() = requireContext().showToast(getString(R.string.long_press_to_select_app))
 

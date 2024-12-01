@@ -1,5 +1,6 @@
 package app.clauncher
 
+import android.app.AppOpsManager
 import android.app.Application
 import android.app.Service.USAGE_STATS_SERVICE
 import android.app.usage.UsageStatsManager
@@ -8,6 +9,7 @@ import android.content.Context
 import android.content.pm.LauncherApps
 import android.os.UserHandle
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.work.BackoffPolicy
@@ -24,14 +26,20 @@ import app.clauncher.helper.SingleLiveEvent
 import app.clauncher.helper.formattedTimeSpent
 import app.clauncher.helper.getAppsList
 import app.clauncher.helper.showToast
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val appContext by lazy { application.applicationContext }
-    private val prefs = Prefs(appContext)
+    private val prefs by lazy { Prefs(appContext) }
+    private val launcherApps by lazy { appContext.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps }
+    private val usageStatsManager by lazy { appContext.getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager }
 
     val firstOpen = MutableLiveData<Boolean>()
     val refreshHome = MutableLiveData<Boolean>()
@@ -48,14 +56,28 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val checkForMessages = SingleLiveEvent<Unit?>()
     val resetLauncherLiveData = SingleLiveEvent<Unit?>()
 
+    // View state management?
+    sealed class ViewState {
+        object Loading : ViewState()
+        data class Success(val data: Any) : ViewState()
+        data class Error(val message: String) : ViewState()
+    }
+
+    private val _viewState = MutableLiveData<ViewState>()
+    val viewState: LiveData<ViewState> = _viewState
+
+    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
+        _viewState.postValue(ViewState.Error(exception.message ?: "An error occurred"))
+    }
+
     fun selectedApp(appModel: AppModel, flag: Int) {
         when (flag) {
             Constants.FLAG_LAUNCH_APP -> {
-                launchApp(appModel.appPackage, appModel.activityClassName, appModel.user)
+                launchApp(appModel)
             }
 
             Constants.FLAG_HIDDEN_APPS -> {
-                launchApp(appModel.appPackage, appModel.activityClassName, appModel.user)
+                launchApp(appModel)
             }
 
             Constants.FLAG_SET_HOME_APP_1 -> {
@@ -168,35 +190,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         updateSwipeApps.postValue(Unit)
     }
 
-    private fun launchApp(packageName: String, activityClassName: String?, userHandle: UserHandle) {
-        val launcher = appContext.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
-        val activityInfo = launcher.getActivityList(packageName, userHandle)
-
-        val component = if (activityClassName.isNullOrBlank()) {
-            // activityClassName will be null for hidden apps.
-            when (activityInfo.size) {
-                0 -> {
-                    appContext.showToast(appContext.getString(R.string.app_not_found))
-                    return
-                }
-
-                1 -> ComponentName(packageName, activityInfo[0].name)
-                else -> ComponentName(packageName, activityInfo[activityInfo.size - 1].name)
-            }
-        } else {
-            ComponentName(packageName, activityClassName)
-        }
-
-        try {
-            launcher.startMainActivity(component, userHandle, null, null)
-        } catch (e: SecurityException) {
+    fun launchApp(appModel: AppModel) {
+        viewModelScope.launch(coroutineExceptionHandler) {
             try {
-                launcher.startMainActivity(component, android.os.Process.myUserHandle(), null, null)
+                val component = ComponentName(appModel.appPackage, appModel.activityClassName ?: "")
+                launcherApps.startMainActivity(component, appModel.user, null, null)
+            } catch (e: SecurityException) {
+                //handleSecurityException(e, appModel)
             } catch (e: Exception) {
-                appContext.showToast(appContext.getString(R.string.unable_to_open_app))
+                _viewState.postValue(ViewState.Error("Unable to launch ${appModel.appLabel}"))
             }
-        } catch (e: Exception) {
-            appContext.showToast(appContext.getString(R.string.unable_to_open_app))
         }
     }
 
@@ -249,23 +252,62 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         homeAppAlignment.value = prefs.homeAlignment
     }
 
-    fun getTodaysScreenTime() {
-        viewModelScope.launch {
-            val usageStatsManager = appContext.getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
+    fun getScreenTimeStats() {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            if (!LauncherUtils.hasUsageStatsPermission(appContext)) {
+                _viewState.postValue(ViewState.Error("Usage stats permission required"))
+                return@launch
+            }
 
-            val calendar = Calendar.getInstance()
-            calendar.set(Calendar.HOUR_OF_DAY, 0)
-            calendar.set(Calendar.MINUTE, 0)
-            calendar.set(Calendar.SECOND, 0)
-
-            val usageStats = usageStatsManager.queryUsageStats(
-                UsageStatsManager.INTERVAL_DAILY,
-                calendar.timeInMillis,
-                calendar.timeInMillis + ONE_DAY_IN_MILLIS
-            )
-            val totalTimeInMillis = usageStats.sumOf { it.totalTimeInForeground }
-            val viewTimeSpent = appContext.formattedTimeSpent(totalTimeInMillis)
-            screenTimeValue.postValue(viewTimeSpent)
+            val stats = getUsageStats()
+            _viewState.postValue(ViewState.Success("Hi"))
         }
     }
+
+    private suspend fun getUsageStats() = withContext(Dispatchers.IO) {
+        val calendar = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+        }
+
+        usageStatsManager.queryUsageStats(
+            UsageStatsManager.INTERVAL_DAILY,
+            calendar.timeInMillis,
+            System.currentTimeMillis()
+        )
+    }
+
+    // Add lifecycle management
+    override fun onCleared() {
+        super.onCleared()
+        viewModelScope.cancel()
+    }
+
 }
+
+object LauncherUtils {
+    private const val MINUTE_IN_MILLIS = 60_000L
+    private const val HOUR_IN_MILLIS = 3_600_000L
+
+    fun formatScreenTime(timeInMillis: Long): String = when {
+        timeInMillis < MINUTE_IN_MILLIS -> "Less than a minute"
+        timeInMillis < HOUR_IN_MILLIS -> "${timeInMillis / MINUTE_IN_MILLIS}m"
+        else -> "${timeInMillis / HOUR_IN_MILLIS}h ${(timeInMillis % HOUR_IN_MILLIS) / MINUTE_IN_MILLIS}m"
+    }
+
+//    fun hasRequiredPermissions(context: Context): Boolean {
+//        return hasUsageStatsPermission(context) &&
+//                hasAccessibilityPermission(context)
+//    }
+
+    fun hasUsageStatsPermission(context: Context): Boolean {
+        val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+        return appOps.checkOpNoThrow(
+            AppOpsManager.OPSTR_GET_USAGE_STATS,
+            android.os.Process.myUid(),
+            context.packageName
+        ) == AppOpsManager.MODE_ALLOWED
+    }
+}
+

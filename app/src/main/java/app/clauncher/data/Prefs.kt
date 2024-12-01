@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.view.Gravity
 import androidx.appcompat.app.AppCompatDelegate
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 class Prefs(context: Context) {
     private val PREFS_FILENAME = "app.clauncher"
@@ -84,11 +86,36 @@ class Prefs(context: Context) {
     private val CALENDAR_APP_USER = "CALENDAR_APP_USER"
     private val CALENDAR_APP_CLASS_NAME = "CALENDAR_APP_CLASS_NAME"
 
-    private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_FILENAME, 0);
+    private val prefs = context.getSharedPreferences(PREFS_FILENAME, Context.MODE_PRIVATE)
 
-    var firstOpen: Boolean
-        get() = prefs.getBoolean(FIRST_OPEN, true)
-        set(value) = prefs.edit().putBoolean(FIRST_OPEN, value).apply()
+    private inline fun <T> preference(
+        defaultValue: T,
+        key: String,
+        crossinline getter: SharedPreferences.(String, T) -> T,
+        crossinline setter: SharedPreferences.Editor.(String, T) -> SharedPreferences.Editor
+    ) = object : ReadWriteProperty<Any?, T> {
+        override fun getValue(thisRef: Any?, property: KProperty<*>): T =
+            prefs.getter(key, defaultValue)
+
+        override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) =
+            prefs.edit().setter(key, value).apply()
+    }
+
+    var appTheme by preference(
+        AppCompatDelegate.MODE_NIGHT_YES,
+        "APP_THEME",
+        SharedPreferences::getInt,
+        SharedPreferences.Editor::putInt
+    )
+
+    var firstOpen by preference(
+        true,
+        "FIRST_OPEN",
+        SharedPreferences::getBoolean,
+        SharedPreferences.Editor::putBoolean
+    )
+
+    // Later can do the rest
 
     var firstOpenTime: Long
         get() = prefs.getLong(FIRST_OPEN_TIME, 0L)
@@ -157,10 +184,6 @@ class Prefs(context: Context) {
     var swipeRightEnabled: Boolean
         get() = prefs.getBoolean(SWIPE_RIGHT_ENABLED, true)
         set(value) = prefs.edit().putBoolean(SWIPE_RIGHT_ENABLED, value).apply()
-
-    var appTheme: Int
-        get() = prefs.getInt(APP_THEME, AppCompatDelegate.MODE_NIGHT_YES)
-        set(value) = prefs.edit().putInt(APP_THEME, value).apply()
 
     var textSizeScale: Float
         get() = prefs.getFloat(TEXT_SIZE_SCALE, 1.0f)
