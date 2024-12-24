@@ -82,7 +82,9 @@ suspend fun getAppsList(
             for (profile in userManager.userProfiles) {
                 for (app in launcherApps.getActivityList(null, profile)) {
 
-                    val appLabelShown = prefs.getAppRenameLabel(app.applicationInfo.packageName).ifBlank { app.label.toString() }
+                    val appLabelShown = prefs.getAppRenameLabel(app.applicationInfo.packageName).ifBlank {
+                        app.label.toString() + if (profile != android.os.Process.myUserHandle()) " (Clone)" else ""
+                    }
                     val appModel = AppModel(
                         appLabelShown,
                         collator.getCollationKey(app.label.toString()),
