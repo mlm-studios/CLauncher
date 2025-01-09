@@ -95,7 +95,7 @@ suspend fun getAppsList(
                     )
 
                     // if the current app is not OLauncher
-                    if (!app.applicationInfo.packageName.equals(context.getPackageName())) {
+                    if (!app.applicationInfo.packageName.equals(context.packageName)) {
                         // is this a hidden app?
                         if (hiddenApps.contains(app.applicationInfo.packageName + "|" + profile.toString())) {
                             if (includeHiddenApps) {
